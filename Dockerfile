@@ -1,36 +1,37 @@
-# Use an official Node.js runtime as a parent image
-FROM node:14
+# Use the official Node.js image as the base image
+FROM node:20-slim
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    poppler-utils \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the package.json and package-lock.json
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
 
 # Install Python and pip
 RUN apt-get update && apt-get install -y \
     python3 \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
+    python3-pip
 
-# Install Tesseract-OCR and other dependencies
-RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
-    libtesseract-dev \
-    poppler-utils \
-    && rm -rf /var/lib/apt/lists/*
+# Copy the Python requirements file and install dependencies
+COPY requirements.txt ./
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy the current directory contents into the container at /usr/src/app
-COPY . .
-
-# Install any needed Python packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Install project dependencies
-RUN npm install
-
-# Make port 3000 available to the world outside this container
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Set the environment variable for Tesseract-OCR path
-ENV TESSERACT_PATH=/usr/bin/tesseract
-
-# Run app.py when the container launches
-CMD ["npm", "start"]
+# Start the application
+CMD ["node", "server.js"]
