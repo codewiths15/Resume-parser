@@ -4,9 +4,10 @@ from PIL import Image
 import pdf2image
 import re
 import json
+import os
 
 # Ensure Tesseract-OCR is installed on your system and pytesseract can find it
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Update with your Tesseract-OCR installation path
+pytesseract.pytesseract.tesseract_cmd = os.environ.get('TESSERACT_PATH', 'tesseract')  # Update with your Tesseract-OCR installation path
 
 def pdf_to_images(pdf_path):
     images = pdf2image.convert_from_path(pdf_path)

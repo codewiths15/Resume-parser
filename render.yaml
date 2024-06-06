@@ -1,18 +1,19 @@
 services:
   - type: web
-    name: resume-parser-app
+    name: resume-parser
     env: node
-    buildCommand: npm install
-    startCommand: npm start
+    plan: free
+    buildCommand: |
+      npm install
+      pip install -r requirements.txt
+    startCommand: node server.js
     envVars:
-      - key: TESSDATA_PREFIX
-        value: /usr/share/tesseract-ocr/4.00/tessdata/
-
-  - type: web
-    name: resume-parser-python
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python3 resume_parser.py
-    envVars:
-      - key: TESSDATA_PREFIX
-        value: /usr/share/tesseract-ocr/4.00/tessdata/
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+      - key: TESSERACT_PATH
+        value: /usr/bin/tesseract
+    build:
+      installPackages:
+        - tesseract-ocr
