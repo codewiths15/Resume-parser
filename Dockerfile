@@ -1,15 +1,15 @@
 # Use an official Node.js runtime as a parent image
-FROM python:3.9
+FROM node:14
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Install required packages
-RUN apt-get update && apt-get install -y tesseract-ocr libtesseract-dev poppler-utils
-
-# Install Node.js and npm
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs
+# Install Tesseract-OCR and other dependencies
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the current directory contents into the container at /usr/src/app
 COPY . .
