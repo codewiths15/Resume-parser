@@ -1,19 +1,11 @@
 services:
   - type: web
     name: resume-parser
-    env: node
+    env: docker
     plan: free
-    buildCommand: |
-      npm install
-      pip install -r requirements.txt
-    startCommand: node server.js
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: PORT
         value: 3000
       - key: NODE_ENV
         value: production
-      - key: TESSERACT_PATH
-        value: /usr/bin/tesseract
-    build:
-      installPackages:
-        - tesseract-ocr
