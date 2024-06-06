@@ -1,23 +1,27 @@
-# Use the official Node.js 16 image as a base image
-FROM node:16
+# Use an official Python runtime as a parent image
+FROM python:3.9
 
-# Create and change to the app directory
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the package.json and package-lock.json (if available)
-COPY package*.json ./
+# Install required packages
+RUN apt-get update && apt-get install -y tesseract-ocr libtesseract-dev poppler-utils
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code
+# Copy the current directory contents into the container at /usr/src/app
 COPY . .
 
-# Install Tesseract
-RUN apt-get update && apt-get install -y tesseract-ocr
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port the app runs on
+# Ensure node.js and npm are installed
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    && apt-get install -y nodejs
+
+# Install project dependencies
+RUN npm install
+
+# Make port 3000 available to the world outside this container
 EXPOSE 3000
 
-# Command to run the application
-CMD [ "node", "server.js" ]
+# Run app.py when the container launches
+CMD ["npm", "start"]
