@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy the Python requirements file and install dependencies
 COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Expose the port the app runs on
 EXPOSE 3000
